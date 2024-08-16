@@ -1,4 +1,4 @@
-use rocket::State;
+use rocket::{futures::stream::Concat, State};
 
 use crate::{
     domain::models::collection::Collection, infrastructure::enums::data_access::DataAccess,
@@ -6,6 +6,9 @@ use crate::{
 
 use super::traits::collection_trait::CollectionTrait;
 
-pub fn get_collection(access: &State<DataAccess>) -> Collection {
-    return access.inner().get_collection_by_id(1);
+pub async fn get_collection_by_id(
+    access: &State<DataAccess>,
+    _id: i32,
+) -> Result<Collection, sqlx::Error> {
+    return access.inner().get_collection_by_id(_id).await;
 }

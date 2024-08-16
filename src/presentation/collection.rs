@@ -1,16 +1,16 @@
-use rocket::{serde::json::Json, State};
+use rocket::{http::Status, serde::json::Json, State};
 
 use crate::{
     application::collection_logic, domain::models::collection::Collection,
     infrastructure::enums::data_access::DataAccess,
 };
 
-#[get("/")]
-pub fn index(data_access: &State<DataAccess>) -> Json<Collection> {
-    // let test = match data_access.inner() {
-    //     DataAccess::Postgres(pg_access) => 1,
-    //     DataAccess::MYSQL(my_access) => 2,
-    // };
+#[get("/GetCollectionById/<id>")]
+pub async fn index(data_access: &State<DataAccess>, id: i32) -> Result<Json<Collection>, Status> {
+    let result = collection_logic::get_collection_by_id(data_access, id).await;
 
-    return Json(collection_logic::get_collection(data_access));
+    match result {
+        Ok(collection) => Ok(Json(collection)),
+        Err(_) => Err(Status::InternalServerError),
+    }
 }

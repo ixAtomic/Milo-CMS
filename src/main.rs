@@ -19,7 +19,7 @@ extern crate rocket;
 #[launch]
 async fn rocket() -> _ {
     dotenv().ok();
-    let endpoints = ["/", "/test"];
+    let endpoints = ["/", "/GetCollectionById"];
 
     let database_url = env::var("CONNECTION_STRING").expect("Connection String must be supplied");
 

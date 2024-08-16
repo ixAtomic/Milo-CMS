@@ -10,9 +10,9 @@ pub enum DataAccess {
 }
 
 impl CollectionTrait for DataAccess {
-    fn get_collection_by_id(&self, _id: i32) -> Collection {
+    async fn get_collection_by_id(&self, _id: i32) -> Result<Collection, sqlx::Error> {
         match self {
-            DataAccess::Postgres(pg_access) => pg_access.get_collection_by_id(_id),
+            DataAccess::Postgres(pg_access) => pg_access.get_collection_by_id(_id).await,
             DataAccess::MYSQL(my_access) => todo!(),
         }
     }
