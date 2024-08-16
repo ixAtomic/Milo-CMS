@@ -1,3 +1,7 @@
+use rocket::serde::Serialize;
+
+#[derive(Serialize)]
+#[serde(crate = "rocket::serde")]
 pub struct Collection {
     id: i32,
     name: String,
