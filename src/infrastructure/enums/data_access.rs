@@ -16,4 +16,11 @@ impl CollectionTrait for DataAccess {
             DataAccess::MYSQL(my_access) => todo!(),
         }
     }
+
+    async fn get_collections(&self) -> Result<Vec<Collection>, sqlx::Error> {
+        match self {
+            DataAccess::Postgres(pg_access) => pg_access.get_collections().await,
+            DataAccess::MYSQL(my_access) => todo!(),
+        }
+    }
 }

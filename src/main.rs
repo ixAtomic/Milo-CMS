@@ -4,7 +4,8 @@ use dotenv::dotenv;
 use infrastructure::enums::data_access::DataAccess;
 use infrastructure::mysql::access::MySQLAccess;
 use infrastructure::postgres::access::PostgresAccess;
-use presentation::collection::index;
+use presentation::collection_endpoints::get_collection_by_id;
+use presentation::collection_endpoints::get_collections;
 use std::env;
 use std::str::FromStr;
 
@@ -19,7 +20,6 @@ extern crate rocket;
 #[launch]
 async fn rocket() -> _ {
     dotenv().ok();
-    let endpoints = ["/", "/GetCollectionById"];
 
     let database_url = env::var("CONNECTION_STRING").expect("Connection String must be supplied");
 
@@ -33,7 +33,7 @@ async fn rocket() -> _ {
             std::process::exit(1);
         }
     };
-    let mut builder;
+    let builder;
     match db {
         DriverKind::Postgres => {
             let pg = match PostgresAccess::new(&database_url).await {
@@ -62,8 +62,8 @@ async fn rocket() -> _ {
         DriverKind::Sqlite => todo!(),
     }
 
-    for endpoint in endpoints {
-        builder = builder.mount(endpoint, routes![index]);
-    }
-    builder
+    builder.mount(
+        "/collections",
+        routes![get_collections, get_collection_by_id],
+    )
 }
