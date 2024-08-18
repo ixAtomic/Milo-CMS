@@ -6,7 +6,10 @@ use infrastructure::mysql::access::MySQLAccess;
 use infrastructure::postgres::access::PostgresAccess;
 use presentation::collection_endpoints::get_collection_by_id;
 use presentation::collection_endpoints::get_collections;
+use presentation::field_endpoints::get_fields;
 use presentation::field_endpoints::get_fields_by_collection;
+use rocket::{get, routes};
+use rocket_cors::{AllowedOrigins, CorsOptions};
 use std::env;
 use std::str::FromStr;
 
@@ -63,10 +66,27 @@ async fn rocket() -> _ {
         DriverKind::Sqlite => todo!(),
     }
 
+    let allowed_origins = AllowedOrigins::some_exact(&[
+        "http://localhost:5173", // Allow your frontend or other origins here
+    ]);
+
+    let cors = CorsOptions {
+        allowed_origins,
+        allow_credentials: true,
+        ..Default::default()
+    }
+    .to_cors()
+    .expect("Error creating CORS fairing");
+
     builder
         .mount(
             "/collections",
-            routes![get_collections, get_collection_by_id],
+            routes![
+                get_collections,
+                get_collection_by_id,
+                get_fields_by_collection,
+            ],
         )
-        .mount("/fields", routes![get_fields_by_collection])
+        .mount("/fields", routes![get_fields])
+        .attach(cors)
 }

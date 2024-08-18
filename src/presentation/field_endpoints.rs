@@ -7,6 +7,16 @@ use crate::{
 };
 
 #[get("/<id>")]
+pub async fn get_fields(access: &State<DataAccess>, id: i32) -> Result<Json<Field>, Status> {
+    let result = field_logic::get_field(access, id).await;
+
+    match result {
+        Ok(field) => Ok(Json(field)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+#[get("/<id>/fields")]
 pub async fn get_fields_by_collection(
     access: &State<DataAccess>,
     id: i32,

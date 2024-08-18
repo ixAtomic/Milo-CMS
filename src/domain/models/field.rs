@@ -22,7 +22,7 @@ pub struct AdminConfiguration {
     pub readonly: bool, // Admin panel field is not editable
     pub required: bool, // if true value will be forced to be set
     pub hidden: bool,   // if true value will not display on the Admin panel
-    pub note: String,   //Helpful not to display for more field information
+    pub note: String,   //Helpful note to display for more field information
 }
 
 #[derive(Serialize)]

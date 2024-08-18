@@ -14,8 +14,7 @@ select
 	,r.relation_table as "relation_table?"
 	,r.relation_field as "relation_field?"
 	,r.delete_event as "delete_event?"
-from collection c
-join fields f on f.collection = c.id
+from fields f
 left join admin_configurations ac on ac.id = f.admin_configuration_id
 left join relationships r on r.id = f.relationship_id
-where c.id = $1
+where f.id = $1

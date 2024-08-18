@@ -31,7 +31,10 @@ impl FieldTrait for DataAccess {
         &self,
         _id: i32,
     ) -> Result<crate::domain::models::field::Field, sqlx::Error> {
-        todo!()
+        match &self {
+            DataAccess::Postgres(pg) => pg.get_field(_id).await,
+            DataAccess::MYSQL(_) => todo!(),
+        }
     }
 
     async fn get_fields_by_collection(

@@ -55,53 +55,106 @@ impl CollectionTrait for PostgresAccess {
 }
 
 impl FieldTrait for PostgresAccess {
-    async fn get_field(
-        &self,
-        _id: i32,
-    ) -> Result<crate::domain::models::field::Field, sqlx::Error> {
-        todo!()
+    async fn get_field(&self, _id: i32) -> Result<Field, sqlx::Error> {
+        sqlx::query_file!("queries/postgres/get_fields.sql", _id)
+            .map(|row| Field {
+                id: row.field_id,
+                collection: row.collection,
+                name: row.name,
+                default: row.default_value,
+                nullable: row.nullable,
+                is_unique: row.is_unique,
+                admin: if row.admin_configuration_id.is_some() {
+                    AdminConfiguration {
+                        readonly: row.readonly.expect("readonly should exist here"),
+                        required: row.readonly.expect("required should exist here"),
+                        hidden: row.readonly.expect("hidden should exist here"),
+                        note: row.note.expect("note should be a string"),
+                    }
+                } else {
+                    //default admin configuration
+                    AdminConfiguration {
+                        readonly: false,
+                        required: false,
+                        hidden: false,
+                        note: "".to_string(),
+                    }
+                },
+                relation: if row.relationship_id.is_some() {
+                    Some(Relationship {
+                        relation_field: row
+                            .relation_field
+                            .expect("if there is a relationship_id then this should always exist"),
+                        relation_table: row
+                            .relation_table
+                            .expect("if there is a relationship_id then this should always exist"),
+                        delete_event: DeleteEvent::from_str(
+                            row.delete_event
+                                .expect(
+                                    "if there is a relationship_id then this should always exist",
+                                )
+                                .as_str(),
+                        )
+                        .expect("valid"),
+                    })
+                } else {
+                    None
+                },
+            })
+            .fetch_one(&self.pool)
+            .await
     }
 
     async fn get_fields_by_collection(
         &self,
         _collection_id: i32,
     ) -> Result<Vec<Field>, sqlx::Error> {
-        let results =
-            sqlx::query_file!("queries/postgres/fields_by_collection.sql", _collection_id)
-                .map(|row| Field {
-                    id: row.field_id,
-                    collection: row.collection,
-                    name: row.name,
-                    default: row.default_value,
-                    nullable: row.nullable,
-                    is_unique: row.is_unique,
-                    admin: AdminConfiguration {
-                        readonly: row.readonly,
-                        required: row.required,
-                        hidden: row.hidden,
+        sqlx::query_file!("queries/postgres/fields_by_collection.sql", _collection_id)
+            .map(|row| Field {
+                id: row.field_id,
+                collection: row.collection,
+                name: row.name,
+                default: row.default_value,
+                nullable: row.nullable,
+                is_unique: row.is_unique,
+                admin: if row.admin_configuration_id.is_some() {
+                    AdminConfiguration {
+                        readonly: row.readonly.expect("readonly should exist here"),
+                        required: row.readonly.expect("required should exist here"),
+                        hidden: row.readonly.expect("hidden should exist here"),
                         note: row.note.expect("note should be a string"),
-                    },
-                    relation: if row.relationship_id.is_some() {
-                        Some(Relationship {
-                    relation_field: row
-                        .relation_field
-                        .expect("if there is a relationship_id then this should always exist"),
-                    relation_table: row
-                        .relation_table
-                        .expect("if there is a relationship_id then this should always exist"),
-                    delete_event: DeleteEvent::from_str(
-                        row.delete_event
-                            .expect("if there is a relationship_id then this should always exist")
-                            .as_str(),
-                    )
-                    .expect("valid"),
-                })
-                    } else {
-                        None
-                    },
-                })
-                .fetch_all(&self.pool)
-                .await?;
-        Ok(results)
+                    }
+                } else {
+                    //default admin configuration
+                    AdminConfiguration {
+                        readonly: false,
+                        required: false,
+                        hidden: false,
+                        note: "".to_string(),
+                    }
+                },
+                relation: if row.relationship_id.is_some() {
+                    Some(Relationship {
+                        relation_field: row
+                            .relation_field
+                            .expect("if there is a relationship_id then this should always exist"),
+                        relation_table: row
+                            .relation_table
+                            .expect("if there is a relationship_id then this should always exist"),
+                        delete_event: DeleteEvent::from_str(
+                            row.delete_event
+                                .expect(
+                                    "if there is a relationship_id then this should always exist",
+                                )
+                                .as_str(),
+                        )
+                        .expect("valid"),
+                    })
+                } else {
+                    None
+                },
+            })
+            .fetch_all(&self.pool)
+            .await
     }
 }
