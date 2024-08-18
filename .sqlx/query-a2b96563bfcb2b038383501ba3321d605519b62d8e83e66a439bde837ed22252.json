@@ -1,0 +1,100 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select \r\n\tf.id as field_id\r\n\t,f.collection\r\n\t,f.relationship_id\r\n\t,f.name\r\n\t,f.default_value\r\n\t,f.nullable\r\n\t,f.is_unique\r\n\t,ac.readonly\r\n\t,ac.required\r\n\t,ac.hidden\r\n\t,ac.note\r\n\t,r.relation_table as \"relation_table?\"\r\n\t,r.relation_field as \"relation_field?\"\r\n\t,r.delete_event as \"delete_event?\"\r\nfrom collection c\r\njoin fields f on f.collection = c.id\r\nleft join admin_configurations ac on ac.id = f.admin_configuration_id\r\nleft join relationships r on r.id = f.relationship_id\r\nwhere c.id = $1\r\n",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "field_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "collection",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "relationship_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 4,
+        "name": "default_value",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "nullable",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 6,
+        "name": "is_unique",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 7,
+        "name": "readonly",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 8,
+        "name": "required",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 9,
+        "name": "hidden",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 10,
+        "name": "note",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "relation_table?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 12,
+        "name": "relation_field?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 13,
+        "name": "delete_event?",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "a2b96563bfcb2b038383501ba3321d605519b62d8e83e66a439bde837ed22252"
+}

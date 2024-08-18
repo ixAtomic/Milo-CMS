@@ -6,6 +6,7 @@ use infrastructure::mysql::access::MySQLAccess;
 use infrastructure::postgres::access::PostgresAccess;
 use presentation::collection_endpoints::get_collection_by_id;
 use presentation::collection_endpoints::get_collections;
+use presentation::field_endpoints::get_fields_by_collection;
 use std::env;
 use std::str::FromStr;
 
@@ -62,8 +63,10 @@ async fn rocket() -> _ {
         DriverKind::Sqlite => todo!(),
     }
 
-    builder.mount(
-        "/collections",
-        routes![get_collections, get_collection_by_id],
-    )
+    builder
+        .mount(
+            "/collections",
+            routes![get_collections, get_collection_by_id],
+        )
+        .mount("/fields", routes![get_fields_by_collection])
 }
