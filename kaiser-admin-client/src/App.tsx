@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { SetStateAction, useEffect, useState } from 'react'
 import './App.css'
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  //const [count, setCount] = useState(0)
   const [collections, setCollections] = useState("");
+  const [currentTab, setTab] = useState(0);
 
   useEffect(() => {
     getAllCollections().then((collections) => setCollections(collections));
@@ -13,27 +15,31 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-        {collections ? (<div>{collections}</div>) : (<div>Loading...</div>)}
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Header currentTab={currentTab} setTab={setTab} />
+      {collections}
+    </>
+  )
+}
+
+// interface TabProps {
+//   currentTab: number,
+//   setTab: React.Dispatch<React.SetStateAction<number>>
+// }
+type TabMethod = React.Dispatch<SetStateAction<number>>;
+
+const Header = ({ currentTab, setTab }: { currentTab: number, setTab: TabMethod } ) => 
+{
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTab(newValue);
+  };
+
+  return (
+    <>
+      <Tabs value={currentTab} onChange={handleChange} aria-label="basic tabs example">
+        <Tab label="Item One" />
+        <Tab label="Item Two" />
+        <Tab label="Item Three" />
+      </Tabs>
     </>
   )
 }
