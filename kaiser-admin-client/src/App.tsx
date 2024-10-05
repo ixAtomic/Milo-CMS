@@ -1,23 +1,44 @@
 import { SetStateAction, useEffect, useState } from 'react'
-import './App.css'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
+import { AdminPage } from './enums';
+import AppBar from '@mui/material/AppBar';
+import { Box, Button, Container, IconButton, List, ListItem, ListItemButton, ListItemText, MenuItem, Toolbar, Typography } from '@mui/material';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
 
+const pages = ['Products', 'Pricing', 'Blog'];
 
 function App() {
   //const [count, setCount] = useState(0)
   const [collections, setCollections] = useState("");
-  const [currentTab, setTab] = useState(0);
+
+  const swapComponent = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, page: AdminPage) => {
+    console.log(event);
+    console.log(page);
+  }
 
   useEffect(() => {
     getAllCollections().then((collections) => setCollections(collections));
   }, []);
-
+  console.log(collections)
   return (
-    <>
-      <Header currentTab={currentTab} setTab={setTab} />
-      {collections}
-    </>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position='static'>
+        <Toolbar disableGutters>
+          <List>
+            <ListItem key={AdminPage.Collections} disablePadding>
+              <ListItemButton onClick={(event) => swapComponent(event, AdminPage.Collections)} sx={{textAlign: 'center'}}>
+                <ListItemText primary={AdminPage[AdminPage.Collections]}/>
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Toolbar>
+      </AppBar>
+      <Container>
+        <Typography>Hello World</Typography>
+      </Container>
+    </Box>
   )
 }
 

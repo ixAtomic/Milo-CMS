@@ -8,7 +8,7 @@ use sqlx::{FromRow, Pool};
 use crate::application::traits::collection_trait::CollectionTrait;
 use crate::application::traits::field_trait::FieldTrait;
 use crate::application::traits::queryable::Queryable;
-use crate::domain::models::collection::Collection;
+use crate::domain::models::collection::{Collection, RCollection};
 use crate::domain::models::field::{AdminConfiguration, DeleteEvent, Field, Relationship};
 
 pub struct PostgresAccess {
@@ -51,6 +51,21 @@ impl CollectionTrait for PostgresAccess {
         )
         .fetch_one(&self.pool)
         .await
+    }
+
+    async fn create_collection(&self, collection: RCollection) -> Result<i32, sqlx::Error> {
+        let result = sqlx::query_file!(
+            "queries/postgres/insert_collection.sql",
+            collection.name,
+            collection.singleton
+        )
+        .fetch_one(&self.pool)
+        .await?;
+
+        // Access the id field from the returned result
+        let inserted_id = result.id;
+
+        Ok(inserted_id)
     }
 }
 

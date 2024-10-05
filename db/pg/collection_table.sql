@@ -16,6 +16,22 @@ ALTER TABLE IF EXISTS public.collection
 
 GRANT DELETE, INSERT, SELECT, UPDATE ON TABLE public.collection TO "MiloCMSUser";
 
+-- Somehow one of these made it so I could actually use the insert command on the collection table
+
+-- Grant insert permission on the table
+GRANT INSERT ON TABLE public.collection TO "MiloCMSUser";
+
+-- Grant select permission on the id column, if using RETURNING
+GRANT SELECT ON TABLE public.collection TO "MiloCMSUser";
+
+-- Grant permission on the sequence if using an auto-incrementing id
+GRANT USAGE, SELECT ON SEQUENCE public.collection_id_seq TO "MiloCMSUser";
+
+-- Optionally, grant schema-level permissions if necessary
+GRANT USAGE ON SCHEMA public TO "MiloCMSUser";
+
+--
+
 GRANT ALL ON TABLE public.collection TO postgres;
 
 CREATE TABLE admin_configurations (

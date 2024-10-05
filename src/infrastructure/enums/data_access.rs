@@ -1,7 +1,9 @@
 use crate::{
-    application::traits::collection_trait::{self, CollectionTrait},
-    application::traits::field_trait::FieldTrait,
-    domain::models::collection::Collection,
+    application::traits::{
+        collection_trait::{self, CollectionTrait},
+        field_trait::FieldTrait,
+    },
+    domain::models::collection::{Collection, RCollection},
     infrastructure::{mysql::access::MySQLAccess, postgres::access::PostgresAccess},
 };
 
@@ -22,6 +24,15 @@ impl CollectionTrait for DataAccess {
         match self {
             DataAccess::Postgres(pg_access) => pg_access.get_collections().await,
             DataAccess::MYSQL(my_access) => todo!(),
+        }
+    }
+
+    async fn create_collection(&self, collection: RCollection) -> Result<i32, sqlx::Error> {
+        match self {
+            DataAccess::Postgres(postgres_access) => {
+                postgres_access.create_collection(collection).await
+            }
+            DataAccess::MYSQL(my_sqlaccess) => todo!(),
         }
     }
 }

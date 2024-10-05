@@ -1,8 +1,9 @@
 use rocket::{http::Status, serde::json::Json, State};
 
 use crate::{
-    application::collection_logic, domain::models::collection::Collection,
-    infrastructure::enums::data_access::DataAccess,
+    application::collection_logic,
+    domain::models::collection::{Collection, RCollection},
+    infrastructure::enums::data_access::{self, DataAccess},
 };
 
 #[get("/")]
@@ -24,6 +25,19 @@ pub async fn get_collection_by_id(
 
     match result {
         Ok(collection) => Ok(Json(collection)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+#[post("/create", data = "<rcollection>")]
+pub async fn create_collection(
+    data_access: &State<DataAccess>,
+    rcollection: Json<RCollection>,
+) -> Result<Json<i32>, Status> {
+    let result = collection_logic::create_collection(data_access, rcollection.into_inner()).await;
+
+    match result {
+        Ok(id) => Ok(Json(id)),
         Err(_) => Err(Status::InternalServerError),
     }
 }

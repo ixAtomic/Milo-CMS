@@ -4,6 +4,7 @@ use dotenv::dotenv;
 use infrastructure::enums::data_access::DataAccess;
 use infrastructure::mysql::access::MySQLAccess;
 use infrastructure::postgres::access::PostgresAccess;
+use presentation::collection_endpoints::create_collection;
 use presentation::collection_endpoints::get_collection_by_id;
 use presentation::collection_endpoints::get_collections;
 use presentation::field_endpoints::get_fields;
@@ -66,9 +67,11 @@ async fn rocket() -> _ {
         DriverKind::Sqlite => todo!(),
     }
 
-    let allowed_origins = AllowedOrigins::some_exact(&[
-        "http://localhost:5173", // Allow your frontend or other origins here
-    ]);
+    // let allowed_origins = AllowedOrigins::some_exact(&[
+    //     "http://localhost:5173", // Allow your frontend or other origins here
+    // ]);
+
+    let allowed_origins = AllowedOrigins::all();
 
     let cors = CorsOptions {
         allowed_origins,
@@ -85,6 +88,7 @@ async fn rocket() -> _ {
                 get_collections,
                 get_collection_by_id,
                 get_fields_by_collection,
+                create_collection
             ],
         )
         .mount("/fields", routes![get_fields])
