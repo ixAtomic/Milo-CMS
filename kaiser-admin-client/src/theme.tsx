@@ -15,7 +15,10 @@ const theme = createTheme({
       main: red.A400,
     },
     background: {
-        default: colors.grey[700]
+        default: colors.grey[500]
+    },
+    success: {
+        main: colors.blue[600]
     }
   },
 });
